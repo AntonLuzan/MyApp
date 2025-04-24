@@ -10,8 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import java.util.List;
 
 public class PostListFragment extends Fragment {
@@ -19,7 +17,6 @@ public class PostListFragment extends Fragment {
     private RecyclerView recyclerView;
     private PostAdapter adapter;
     private PostViewModel postViewModel;
-    private CompositeDisposable disposable = new CompositeDisposable();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,19 +39,14 @@ public class PostListFragment extends Fragment {
 
         recyclerView.setAdapter(adapter);
 
-        // Подписка на изменения
-        postViewModel.getPostsLiveData().observe(getViewLifecycleOwner(), this::updatePosts);
+        // Подписка на обновление списка постов через LiveData
+        postViewModel.getPostsLiveData()
+                .observe(getViewLifecycleOwner(), this::updatePosts); // Убрано RxJava, теперь LiveData
 
         return view;
     }
 
     private void updatePosts(List<Post> posts) {
         adapter.submitList(posts);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        disposable.clear();
     }
 }

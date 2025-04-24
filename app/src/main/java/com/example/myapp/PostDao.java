@@ -3,6 +3,7 @@ package com.example.myapp;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.example.myapp.Post;
@@ -17,6 +18,7 @@ public interface PostDao {
     LiveData<List<Post>> getAllPosts();
 
     // Вставка списка постов
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Post> posts);
+
 }

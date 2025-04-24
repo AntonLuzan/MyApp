@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/postListFragment"
+        android:title="Посты"
+        android:icon="@drawable/ic_posts"/>
+    <item
+        android:id="@+id/favoritesFragment"
+        android:title="Избранное"
+        android:icon="@drawable/ic_star_filled"/>
+</menu>

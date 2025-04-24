@@ -40,8 +40,10 @@ public class PostAdapter extends ListAdapter<Post, PostAdapter.PostViewHolder> {
         }
 
         public void bind(final Post post, final OnItemClickListener listener) {
-            // Делаем текст жирным и приводим первую букву заголовка к верхнему регистру
-            String formattedTitle = post.getTitle().substring(0, 1).toUpperCase() + post.getTitle().substring(1);
+            // Проверяем, что заголовок не пустой, иначе используем "Без заголовка"
+            String title = post.getTitle();
+            String formattedTitle = title.isEmpty() ? "Без заголовка" : title.substring(0, 1).toUpperCase() + title.substring(1);
+
             textViewTitle.setText(formattedTitle);
             textViewTitle.setTypeface(null, Typeface.BOLD);
 

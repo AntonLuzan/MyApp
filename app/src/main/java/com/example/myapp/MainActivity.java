@@ -9,6 +9,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,8 +18,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        NavController navController = navHostFragment.getNavController();
+        // ОПРЕДЕЛЯЕМ BottomNavigationView, иначе будет ошибка "Unknown fragments"
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        NavHostFragment navHostFragment =
+                (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+
+        if (navHostFragment != null) {
+            NavController navController = navHostFragment.getNavController();
+            NavigationUI.setupWithNavController(bottomNavigationView, navController);
+        }
     }
 
     private void loadFragment(Fragment fragment, boolean addToBackStack) {

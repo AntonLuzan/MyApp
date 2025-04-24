@@ -4,27 +4,47 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/postListFragment">
 
+    <!-- Фрагмент списка постов -->
     <fragment
         android:id="@+id/postListFragment"
         android:name="com.example.myapp.PostListFragment"
         android:label="Список постов">
-        <action
-            android:id="@+id/action_postList_to_detail"
-            app:destination="@id/detailFragment"/>
+
         <action
             android:id="@+id/action_postListFragment_to_detailFragment"
             app:destination="@id/detailFragment" />
+        <action
+            android:id="@+id/action_postListFragment_to_favoritesFragment"
+            app:destination="@id/favoritesFragment" />
     </fragment>
 
+    <!-- Фрагмент деталей поста -->
     <fragment
         android:id="@+id/detailFragment"
         android:name="com.example.myapp.DetailFragment"
         android:label="Детали поста">
+
         <argument
             android:name="postTitle"
-            app:argType="string"/>
+            app:argType="string" />
+        <argument
+            android:name="body"
+            app:argType="string" />
+
         <action
             android:id="@+id/action_detailFragment_to_postListFragment"
             app:destination="@id/postListFragment" />
     </fragment>
+
+    <!-- Фрагмент избранного -->
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.example.myapp.FavoritesFragment"
+        android:label="Избранное">
+
+        <action
+            android:id="@+id/action_favoritesFragment_to_postListFragment"
+            app:destination="@id/postListFragment" />
+    </fragment>
+
 </navigation>
