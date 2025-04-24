@@ -1,52 +1,38 @@
 package com.example.myapp;
 
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.DiffUtil;
-import java.util.List;
+import androidx.recyclerview.widget.ListAdapter;
+import androidx.recyclerview.widget.RecyclerView;
 
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
+public class PostAdapter extends ListAdapter<Post, PostAdapter.PostViewHolder> {
 
-    private List<Post> posts;
-    private OnItemClickListener listener;
+    private final OnItemClickListener listener;
 
-    public PostAdapter(List<Post> posts, OnItemClickListener listener) {
-        this.posts = posts;
+    public PostAdapter(@NonNull DiffUtil.ItemCallback<Post> diffCallback, OnItemClickListener listener) {
+        super(diffCallback);
         this.listener = listener;
-    }
-
-    public void updatePosts(List<Post> newPosts) {
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffCallback(posts, newPosts));
-        posts = newPosts;
-        diffResult.dispatchUpdatesTo(this);
     }
 
     @NonNull
     @Override
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_post, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_post, parent, false);
         return new PostViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
-        Post post = posts.get(position);
-        holder.bind(post, listener );
-    }
-
-    @Override
-    public int getItemCount() {
-        return posts != null ? posts.size() : 0;
+        holder.bind(getItem(position), listener);
     }
 
     public static class PostViewHolder extends RecyclerView.ViewHolder {
         TextView textViewTitle;
-
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -54,7 +40,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         }
 
         public void bind(final Post post, final OnItemClickListener listener) {
-            textViewTitle.setText(post.getTitle());
+            // Делаем текст жирным и приводим первую букву заголовка к верхнему регистру
+            String formattedTitle = post.getTitle().substring(0, 1).toUpperCase() + post.getTitle().substring(1);
+            textViewTitle.setText(formattedTitle);
+            textViewTitle.setTypeface(null, Typeface.BOLD);
+
             itemView.setOnClickListener(v -> listener.onItemClick(post));
         }
     }
@@ -63,34 +53,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         void onItemClick(Post post);
     }
 
-
-    private static class DiffCallback extends DiffUtil.Callback {
-        private final List<Post> oldList;
-        private final List<Post> newList;
-
-        public DiffCallback(List<Post> oldList, List<Post> newList) {
-            this.oldList = oldList;
-            this.newList = newList;
+    public static class PostDiffCallback extends DiffUtil.ItemCallback<Post> {
+        @Override
+        public boolean areItemsTheSame(@NonNull Post oldItem, @NonNull Post newItem) {
+            return oldItem.getId() == newItem.getId();
         }
 
         @Override
-        public int getOldListSize() {
-            return oldList.size();
-        }
-
-        @Override
-        public int getNewListSize() {
-            return newList.size();
-        }
-
-        @Override
-        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-            return oldList.get(oldItemPosition).getId() == newList.get(newItemPosition).getId();
-        }
-
-        @Override
-        public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-            return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
+        public boolean areContentsTheSame(@NonNull Post oldItem, @NonNull Post newItem) {
+            return oldItem.equals(newItem);
         }
     }
 }

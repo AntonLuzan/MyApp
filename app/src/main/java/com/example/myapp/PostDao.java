@@ -1,20 +1,22 @@
 package com.example.myapp;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+
+import com.example.myapp.Post;
+
 import java.util.List;
-import io.reactivex.rxjava3.core.Flowable;
 
 @Dao
 public interface PostDao {
 
-    // Получение всех постов
+    // Получение всех постов (LiveData)
     @Query("SELECT * FROM posts")
-    Flowable<List<Post>> getAllPosts();
+    LiveData<List<Post>> getAllPosts();
 
     // Вставка списка постов
     @Insert
     void insertAll(List<Post> posts);
-
 }

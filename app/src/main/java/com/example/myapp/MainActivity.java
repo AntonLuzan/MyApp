@@ -1,10 +1,14 @@
-
 package com.example.myapp;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -13,16 +17,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Проверяем, загружен ли фрагмент
-        if (savedInstanceState == null) {
-            loadFragment(new PostListFragment());
-        }
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        NavController navController = navHostFragment.getNavController();
     }
 
-    private void loadFragment(Fragment fragment) {
+    private void loadFragment(Fragment fragment, boolean addToBackStack) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
+        FragmentTransaction transaction = fragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
-                .commit();
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+
+        if (addToBackStack) {
+            transaction.addToBackStack(null);
+        }
+
+        transaction.commit();
     }
 }

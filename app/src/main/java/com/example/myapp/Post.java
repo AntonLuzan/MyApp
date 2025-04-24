@@ -2,12 +2,17 @@ package com.example.myapp;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.ColumnInfo;
+import java.util.Objects;
 
 @Entity(tableName = "posts")
 public class Post {
     @PrimaryKey
     private int id;
+
+    @ColumnInfo(name = "user_id")
     private int userId;
+
     private String title;
     private String body;
 
@@ -52,4 +57,20 @@ public class Post {
         this.body = body;
     }
 
+    // Метод equals() для корректной работы DiffUtil
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Post)) return false;
+        Post post = (Post) o;
+        return id == post.id &&
+                userId == post.userId &&
+                Objects.equals(title, post.title) &&
+                Objects.equals(body, post.body);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, title, body);
+    }
 }

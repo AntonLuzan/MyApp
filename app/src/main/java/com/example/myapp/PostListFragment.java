@@ -2,6 +2,9 @@ package com.example.myapp;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,63 +12,49 @@ import android.view.View;
 import android.view.ViewGroup;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import java.util.ArrayList;
+import java.util.List;
 
 public class PostListFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private PostAdapter adapter;
-    private PostRepository repository;
+    private PostViewModel postViewModel;
     private CompositeDisposable disposable = new CompositeDisposable();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_post_list, container, false);
 
-        // Инициализация репозитория для работы с данными
-        repository = new PostRepository(requireContext());
+        postViewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
-        // Настройка RecyclerView
         recyclerView = view.findViewById(R.id.recyclerViewPosts);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new PostAdapter(new ArrayList<>(), post -> {
+
+        adapter = new PostAdapter(new PostAdapter.PostDiffCallback(), post -> {
             Bundle bundle = new Bundle();
             bundle.putInt("id", post.getId());
-            bundle.putString("title", post.getTitle());
+            bundle.putString("postTitle", post.getTitle()); // изменён ключ
             bundle.putString("body", post.getBody());
 
-
-            DetailFragment detailFragment = new DetailFragment();
-            detailFragment.setArguments(bundle);
-
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, detailFragment)
-                    .addToBackStack(null)
-                    .commit();
+            NavController navController = Navigation.findNavController(requireView());
+            navController.navigate(R.id.action_postListFragment_to_detailFragment, bundle);
         });
+
         recyclerView.setAdapter(adapter);
 
-        // Загрузка данных
-        loadData();
+        // Подписка на изменения
+        postViewModel.getPostsLiveData().observe(getViewLifecycleOwner(), this::updatePosts);
 
         return view;
     }
 
-    private void loadData() {
-        disposable.add(repository.getPostsFromDatabase()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(posts -> adapter.updatePosts(posts), Throwable::printStackTrace));
-
-        disposable.add(repository.fetchPostsFromApi()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(posts -> {}, Throwable::printStackTrace));
-
+    private void updatePosts(List<Post> posts) {
+        adapter.submitList(posts);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        disposable.clear(); // Очищаем подписки, чтобы избежать утечек памяти
+        disposable.clear();
     }
 }

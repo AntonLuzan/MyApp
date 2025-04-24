@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/postListFragment">
+
+    <fragment
+        android:id="@+id/postListFragment"
+        android:name="com.example.myapp.PostListFragment"
+        android:label="Список постов">
+        <action
+            android:id="@+id/action_postList_to_detail"
+            app:destination="@id/detailFragment"/>
+        <action
+            android:id="@+id/action_postListFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.myapp.DetailFragment"
+        android:label="Детали поста">
+        <argument
+            android:name="postTitle"
+            app:argType="string"/>
+        <action
+            android:id="@+id/action_detailFragment_to_postListFragment"
+            app:destination="@id/postListFragment" />
+    </fragment>
+</navigation>

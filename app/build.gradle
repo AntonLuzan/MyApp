@@ -5,6 +5,13 @@ plugins {
 android {
     namespace 'com.example.myapp'
     compileSdk 35
+    buildFeatures {
+        dataBinding true
+    }
+    viewBinding {
+        enabled = true
+    }
+
 
     defaultConfig {
         applicationId "com.example.myapp"
@@ -41,9 +48,17 @@ dependencies {
 
     // Room для локальной БД
     implementation 'androidx.room:room-runtime:2.5.2'
+    implementation libs.navigation.fragment
+    implementation libs.navigation.ui
     annotationProcessor 'androidx.room:room-compiler:2.5.2'
     implementation 'androidx.room:room-rxjava3:2.5.2'
     implementation 'androidx.fragment:fragment:1.5.6'
+    implementation "androidx.fragment:fragment:1.5.7"
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.5.3'
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.5.3'
+    implementation "androidx.navigation:navigation-fragment:2.5.3"
+    implementation "androidx.navigation:navigation-ui:2.5.3"
+
 
     implementation libs.appcompat
     implementation libs.material
