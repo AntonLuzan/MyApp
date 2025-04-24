@@ -7,6 +7,24 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!-- Верхняя панель с поиском -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        app:title="Все посты"
+        app:titleTextColor="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:queryHint="Поиск..."
+            app:iconifiedByDefault="true"/>
+    </androidx.appcompat.widget.Toolbar>
+
     <!-- Контейнер для фрагментов -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container"
@@ -15,7 +33,7 @@
         android:layout_height="0dp"
         app:navGraph="@navigation/nav_graph"
         app:defaultNavHost="true"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"/>
 
     <!-- Нижняя навигационная панель -->

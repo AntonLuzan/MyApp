@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class PostListFragment extends Fragment {
@@ -19,6 +19,8 @@ public class PostListFragment extends Fragment {
     private PostAdapter adapter;
     private PostViewModel postViewModel;
     private FavoritesManager favoritesManager;
+
+    private List<Post> allPosts = new ArrayList<>(); // Сохраненный список постов
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,18 +40,31 @@ public class PostListFragment extends Fragment {
 
             NavController navController = Navigation.findNavController(requireView());
             navController.navigate(R.id.action_postListFragment_to_detailFragment, bundle);
-        }, favoritesManager); // Добавлен `FavoritesManager`
+        }, favoritesManager);
 
         recyclerView.setAdapter(adapter);
 
-        // Подписка на обновление списка постов через LiveData
-        postViewModel.getPostsLiveData()
-                .observe(getViewLifecycleOwner(), this::updatePosts);
+        postViewModel.getPostsLiveData().observe(getViewLifecycleOwner(), posts -> {
+            if (posts != null) {
+                allPosts.clear();
+                allPosts.addAll(posts);
+                adapter.submitList(posts);
+            }
+        });
 
         return view;
     }
 
-    private void updatePosts(List<Post> posts) {
-        adapter.submitList(posts);
+    // Метод фильтрации постов
+    public void filterPosts(String query) {
+        List<Post> filteredList = new ArrayList<>();
+        if (allPosts != null) {
+            for (Post post : allPosts) {
+                if (post.getTitle().toLowerCase().contains(query.toLowerCase())) {
+                    filteredList.add(post);
+                }
+            }
+        }
+        adapter.submitList(filteredList);
     }
 }
