@@ -55,7 +55,6 @@ public class PostListFragment extends Fragment {
         return view;
     }
 
-    // Метод фильтрации постов
     public void filterPosts(String query) {
         List<Post> filteredList = new ArrayList<>();
         if (allPosts != null) {
