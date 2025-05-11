@@ -3,20 +3,18 @@ package com.example.myapp;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
-import android.widget.SearchView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
-
-    private PostListFragment postListFragment; // Фрагмент списка постов
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,16 +29,19 @@ public class MainActivity extends AppCompatActivity {
             NavController navController = navHostFragment.getNavController();
             NavigationUI.setupWithNavController(bottomNavigationView, navController);
         }
-
-        postListFragment = new PostListFragment(); // Инициализируем фрагмент списка постов
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setIconified(false);
+        searchView.setFocusable(true);
+        searchView.requestFocus();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -60,22 +61,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendQueryToFragment(String query) {
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (currentFragment instanceof PostListFragment) {
-            ((PostListFragment) currentFragment).filterPosts(query);
+        PostListFragment postListFragment = (PostListFragment) getSupportFragmentManager()
+                .findFragmentByTag("POST_LIST_FRAGMENT");
+
+        if (postListFragment != null) {
+            postListFragment.filterPosts(query);
         }
-    }
-
-    private void loadFragment(Fragment fragment, boolean addToBackStack) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-
-        if (addToBackStack) {
-            transaction.addToBackStack(null);
-        }
-
-        transaction.commit();
     }
 }

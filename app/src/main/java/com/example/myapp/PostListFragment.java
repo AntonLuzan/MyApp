@@ -1,6 +1,7 @@
 package com.example.myapp;
 
 import android.os.Bundle;
+import android.util.Log;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -20,7 +21,7 @@ public class PostListFragment extends Fragment {
     private PostViewModel postViewModel;
     private FavoritesManager favoritesManager;
 
-    private List<Post> allPosts = new ArrayList<>(); // Сохраненный список постов
+    private List<Post> allPosts = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,14 +57,14 @@ public class PostListFragment extends Fragment {
     }
 
     public void filterPosts(String query) {
-        List<Post> filteredList = new ArrayList<>();
-        if (allPosts != null) {
-            for (Post post : allPosts) {
-                if (post.getTitle().toLowerCase().contains(query.toLowerCase())) {
-                    filteredList.add(post);
-                }
+        Log.d("SearchView", "Фильтрация: " + query);
+
+        postViewModel.getPostsLiveData().observe(getViewLifecycleOwner(), posts -> {
+            if (posts != null && !posts.isEmpty()) {
+                allPosts.clear();
+                allPosts.addAll(posts);
+                adapter.submitList(posts);
             }
-        }
-        adapter.submitList(filteredList);
+        });
     }
 }
