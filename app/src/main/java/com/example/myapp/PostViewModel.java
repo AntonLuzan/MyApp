@@ -45,6 +45,6 @@ public class PostViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        disposable.clear(); // Очищаем подписки при уничтожении ViewModel
+        disposable.clear();
     }
 }
